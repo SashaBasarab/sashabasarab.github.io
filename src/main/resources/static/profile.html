@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Профіль студента</title>
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const profileContainer = document.getElementById("profile-container");
+
+            async function fetchProfile() {
+                try {
+                    const response = await fetch("http://localhost:8080/api/profile", {
+                        credentials: "include" // Включає кукі для аутентифікації
+                    });
+                    if (!response.ok) throw new Error("Профіль не знайдено");
+
+                    const profile = await response.json();
+                    profileContainer.innerHTML = `
+                        <h1>Профіль студента</h1>
+                        <p><strong>Ім'я:</strong> ${profile.firstName}</p>
+                        <p><strong>Прізвище:</strong> ${profile.lastName}</p>
+                        <p><strong>Пошта:</strong> ${profile.email}</p>
+                    `;
+                } catch (error) {
+                    console.error("Помилка:", error);
+                    profileContainer.innerHTML = "<p>Не вдалося завантажити профіль.</p>";
+                }
+            }
+
+            fetchProfile();
+        });
+    </script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f4f4f4;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <nav class="navbar">
+        <div class="container">
+            <h1 class="logo">Партнери УКД</h1>
+            <ul class="nav-links">
+                <li><a href="index.html">Головна</a></li>
+                <li><a href="profile.html">Профіль</a></li>
+                <li><a href="index.html">Партнери</a></li>
+                <li><a href="login.html" class="logout-btn">Вийти</a></li>
+            </ul>
+        </div>
+    </nav>
+</header>
+<div id="profile-container"></div>
+</body>
+</html>

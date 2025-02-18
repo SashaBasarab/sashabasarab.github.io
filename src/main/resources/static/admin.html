@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Адмін-панель</title>
+  <link rel="stylesheet" href="styles.css">
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const partnerList = document.getElementById("partner-list");
+      const partnerForm = document.getElementById("partner-form");
+
+      async function fetchPartners() {
+        try {
+          const response = await fetch("http://localhost:8080/api/partners", { credentials: "include" });
+          if (!response.ok) throw new Error("Помилка завантаження");
+          const partners = await response.json();
+
+          partnerList.innerHTML = "";
+
+          partners.forEach(partner => {
+            const item = document.createElement("div");
+            item.classList.add("partner-item");
+            item.innerHTML = `
+              <h3>${partner.name}</h3>
+              <p>${partner.description}</p>
+              <p><strong>Знижка:</strong> ${partner.discountPercentage}%</p>
+              ${partner.imageUrl ? `<img src="${partner.imageUrl}" alt="${partner.name}" class="partner-image">` : ""}
+              <button class="delete-btn" data-id="${partner.id}">Видалити</button>
+            `;
+            partnerList.appendChild(item);
+          });
+        } catch (error) {
+          console.error(error);
+          partnerList.innerHTML = "<p>Помилка завантаження партнерів.</p>";
+        }
+      }
+
+      async function addPartner(event) {
+        event.preventDefault();
+        const formData = new FormData(partnerForm);
+
+        let imageUrl = "";
+        const file = formData.get("image");
+        if (file.size > 0) {
+          const imageForm = new FormData();
+          imageForm.append("file", file);
+
+          try {
+            const uploadResponse = await fetch("http://localhost:8080/api/uploads/image", {
+              method: "POST",
+              body: imageForm
+            });
+            imageUrl = await uploadResponse.text();
+          } catch (error) {
+            console.error("Помилка завантаження зображення:", error);
+          }
+        }
+
+        const newPartner = {
+          name: formData.get("name"),
+          description: formData.get("description"),
+          discountConditions: formData.get("discountConditions"),
+          discountPercentage: parseInt(formData.get("discountPercentage")),
+          imageUrl: imageUrl,
+          address: formData.get("address")
+        };
+
+        try {
+          await fetch("http://localhost:8080/api/partners", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(newPartner),
+            credentials: "include"
+          });
+          fetchPartners();
+          partnerForm.reset();
+        } catch (error) {
+          console.error(error);
+        }
+      }
+
+      async function deletePartner(id) {
+        try {
+          await fetch(`http://localhost:8080/api/partners/${id}`, {
+            method: "DELETE",
+            credentials: "include"
+          });
+          fetchPartners();
+        } catch (error) {
+          console.error("Помилка видалення партнера:", error);
+        }
+      }
+
+      partnerList.addEventListener("click", function (event) {
+        if (event.target.classList.contains("delete-btn")) {
+          const id = event.target.getAttribute("data-id");
+          deletePartner(id);
+        }
+      });
+
+      partnerForm.addEventListener("submit", addPartner);
+      fetchPartners();
+    });
+  </script>
+</head>
+<body>
+<nav class="navbar">
+  <div class="container">
+    <span class="logo">Адмін-панель</span>
+    <ul class="nav-links">
+      <li><a href="#">Головна</a></li>
+      <li><a href="#">Вийти</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main>
+  <section id="partner-container">
+    <h1>Управління партнерами</h1>
+    <form id="partner-form">
+      <input type="text" name="name" placeholder="Назва партнера" required>
+      <input type="text" name="description" placeholder="Опис партнера" required>
+      <input type="text" name="discountConditions" placeholder="Умови знижки" required>
+      <input type="number" name="discountPercentage" placeholder="Відсоток знижки" required>
+      <input type="text" id="address" name="address" placeholder="Адреса" required>
+      <input type="file" name="image" accept="image/*" required>
+      <button type="submit">Додати партнера</button>
+    </form>
+    <div id="partner-list" class="partner-grid"></div>
+  </section>
+</main>
+</body>
+</html>
