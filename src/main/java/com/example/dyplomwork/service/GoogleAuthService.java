@@ -23,10 +23,9 @@ public class GoogleAuthService {
             if (idToken != null) {
                 GoogleIdToken.Payload payload = idToken.getPayload();
 
-                // Перевіряємо, чи домен пошти є @ukd.edu.ua
                 String email = payload.getEmail();
                 if (email.endsWith("@ukd.edu.ua")) {
-                    return generateJwtToken(email); // Генеруємо JWT
+                    return generateJwtToken(email);
                 }
             }
         } catch (Exception e) {
@@ -36,7 +35,6 @@ public class GoogleAuthService {
     }
 
     private String generateJwtToken(String email) {
-        // ТУТ МОЖНА ДОДАТИ ГЕНЕРАЦІЮ JWT
         return "mocked-jwt-token-for-" + email;
     }
 }

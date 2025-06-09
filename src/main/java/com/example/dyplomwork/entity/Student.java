@@ -16,15 +16,11 @@ public class Student {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
-    private String studentId; // Ідентифікатор студента
-
     public Student() {}
 
-    public Student(String email, String name, String studentId) {
+    public Student(String email, String name) {
         this.email = email;
         this.name = name;
-        this.studentId = studentId;
     }
 
     // Геттери та сеттери
@@ -52,11 +48,5 @@ public class Student {
         this.name = name;
     }
 
-    public String getStudentId() {
-        return studentId;
-    }
 
-    public void setStudentId(String studentId) {
-        this.studentId = studentId;
-    }
 }
