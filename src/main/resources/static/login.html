@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Логін</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script>
+    function handleCredentialResponse(response) {
+      fetch("http://localhost:8080/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ tokenId: response.credential }),
+      })
+              .then((res) => res.json())
+              .then((data) => {
+                if (data.accessToken) {
+                  localStorage.setItem("token", data.accessToken);
+                  window.location.href = "index.html";  // Редірект на index.html
+                } else {
+                  alert("Помилка авторизації!");
+                }
+              })
+              .catch((err) => console.error("Помилка:", err));
+    }
+  </script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #ff0c0c, #fd1c1c);
+      color: #fff;
+    }
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #fff;
+    }
+    p {
+      font-size: 0.9rem;
+      color: #f5f5f5;
+    }
+  </style>
+</head>
+<body>
+  <div id="login-container">
+    <h1>Система знижок Університету Короля Данила</h1>
+    <p>Увійдіть за допомогою вашої університетської пошти</p>
+    <div id="g_id_onload"
+         data-client_id="477185879772-35jur76dirbc12ko8fujegqgmrhmfv70.apps.googleusercontent.com"
+         data-callback="handleCredentialResponse">
+    </div>
+    <div class="g_id_signin" data-type="standard"></div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Партнери УКД</title>
+  <link rel="stylesheet" href="styles.css">
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const partnerList = document.getElementById("partner-list");
+
+      async function fetchPartners() {
+        try {
+          const response = await fetch("http://localhost:8080/api/partners");
+          const partners = await response.json();
+
+          partners.forEach(partner => {
+            const partnerItem = document.createElement("div");
+            partnerItem.className = "partner-item";
+
+            partnerItem.innerHTML = `
+              <img src="${partner.imageUrl}" alt="${partner.name}" class="partner-image">
+              <h3>${partner.name}</h3>
+              <p>${partner.description}</p>
+              <p><strong>Знижка:</strong> ${partner.discountPercentage}%</p>
+              <a href="partner.html?id=${partner.id}" class="view-details">Детальніше</a>
+            `;
+
+            partnerList.appendChild(partnerItem);
+          });
+        } catch (error) {
+          console.error("Помилка завантаження партнерів:", error);
+          partnerList.innerHTML = "<p>Не вдалося завантажити список партнерів.</p>";
+        }
+      }
+
+      fetchPartners();
+    });
+  </script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f4f4f4;
+      color: #333;
+    }
+
+    main {
+      width: 100%;
+    }
+
+    #partner-container {
+      margin: 20px auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 100%;
+    }
+
+    #partner-list {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr); /* Три колонки */
+      gap: 20px;
+      list-style: none;
+      padding: 0;
+      justify-content: center;
+    }
+
+    .partner-item {
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      text-align: center;
+    }
+
+    .partner-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+    }
+
+    .partner-image {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+
+    .partner-item h3 {
+      margin-top: 0;
+      color: #9c1825;
+    }
+
+    .partner-item p {
+      margin: 5px 0;
+      color: #555;
+    }
+
+    .view-details {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 10px 15px;
+      background: #9c1825;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 5px;
+      transition: 0.3s;
+    }
+
+    .view-details:hover {
+      background: #e90d23;
+    }
+
+    @media (max-width: 1024px) {
+      #partner-list {
+        grid-template-columns: repeat(2, 1fr); /* Два елементи в рядку */
+      }
+    }
+
+    @media (max-width: 600px) {
+      #partner-list {
+        grid-template-columns: repeat(1, 1fr); /* Один елемент в рядку */
+      }
+    }
+  </style>
+</head>
+<body>
+<header>
+  <nav class="navbar">
+    <div class="container">
+      <h1 class="logo">Партнери УКД</h1>
+      <ul class="nav-links">
+        <li><a href="index.html">Головна</a></li>
+        <li><a href="profile.html">Профіль</a></li>
+        <li><a href="index.html">Партнери</a></li>
+        <li><a href="login.html" class="logout-btn">Вийти</a></li>
+      </ul>
+    </div>
+  </nav>
+</header>
+<main>
+  <div id="partner-container">
+    <div id="partner-list"></div>
+  </div>
+</main>
+</body>
+</html>

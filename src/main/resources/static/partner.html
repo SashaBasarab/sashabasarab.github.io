@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Партнер УКД</title>
+  <link rel="stylesheet" href="styles.css">
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const partnerContainer = document.getElementById("partner-container");
+      const mapContainer = document.getElementById("map");
+      const urlParams = new URLSearchParams(window.location.search);
+      const partnerId = urlParams.get("id");
+
+      async function fetchPartner() {
+        if (!partnerId) {
+          partnerContainer.innerHTML = "<p>Партнера не знайдено.</p>";
+          return;
+        }
+
+        try {
+          const response = await fetch(`http://localhost:8080/api/partners/${partnerId}`);
+          if (!response.ok) {
+            throw new Error("Партнера не знайдено");
+          }
+
+          const partner = await response.json();
+
+          partnerContainer.innerHTML = `
+            <h1>${partner.name}</h1>
+            <img src="${partner.imageUrl}" alt="${partner.name}" style="max-width: 300px; display: block; margin: 10px 0;">
+            <p>${partner.description}</p>
+            <p><strong>Умови знижки:</strong> ${partner.discountConditions}</p>
+            <p><strong>Знижка:</strong> ${partner.discountPercentage}%</p>
+            <p><strong>Адреса:</strong> ${partner.address}</p>
+            <a href="index.html" class="back_to_list">Назад до списку</a>
+          `;
+
+          loadMap(partner.address);
+        } catch (error) {
+          console.error("Помилка завантаження партнера:", error);
+          partnerContainer.innerHTML = "<p>Не вдалося завантажити дані про партнера.</p>";
+        }
+      }
+
+      function loadMap(address) {
+        if (!address) return;
+
+        const mapIframe = document.createElement("iframe");
+        mapIframe.width = "500";
+        mapIframe.height = "500";
+        mapIframe.style.border = "0";
+        mapIframe.loading = "lazy";
+        mapIframe.referrerPolicy = "no-referrer-when-downgrade";
+        mapIframe.src = `https://www.google.com/maps?q=${encodeURIComponent(address)}&output=embed`;
+
+        mapContainer.appendChild(mapIframe);
+      }
+
+      fetchPartner();
+    });
+  </script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f4f4f4;
+      color: #333;
+    }
+    #partner-container {
+      max-width: 800px;
+      margin: 20px auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    #map {
+      max-width: 1200px;
+      margin: 20px auto;
+    }
+  </style>
+</head>
+<body>
+<header>
+  <nav class="navbar">
+    <div class="container">
+      <h1 class="logo">Партнери УКД</h1>
+      <ul class="nav-links">
+        <li><a href="index.html">Головна</a></li>
+        <li><a href="profile.html">Профіль</a></li>
+        <li><a href="index.html">Партнери</a></li>
+        <li><a href="login.html" class="logout-btn">Вийти</a></li>
+      </ul>
+    </div>
+  </nav>
+</header>
+
+<div id="partner-container"></div>
+<div id="map"></div>
+
+</body>
+</html>
