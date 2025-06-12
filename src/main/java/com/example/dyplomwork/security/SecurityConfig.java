@@ -24,8 +24,8 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable()) // Відключення CSRF (якщо потрібно)
                 .authorizeHttpRequests(auth -> auth
-                        .mvcMatchers("/public/**").permitAll() // Відкрита зона
-                        .mvcMatchers("/admin/**").access((authenticationSupplier, context) ->
+                        .requestMatchers("/public/**").permitAll() // Відкрита зона
+                        .requestMatchers("/admin/**").access((authenticationSupplier, context) ->
                                 new AuthorizationDecision(isAdmin(authenticationSupplier))
                         ) // Перевірка адміністратора
                         .anyRequest().authenticated() // Усі інші запити потребують авторизації
