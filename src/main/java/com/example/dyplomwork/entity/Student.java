@@ -23,7 +23,7 @@ public class Student {
         this.name = name;
     }
 
-    // Геттери та сеттери
+
     public Long getId() {
         return id;
     }

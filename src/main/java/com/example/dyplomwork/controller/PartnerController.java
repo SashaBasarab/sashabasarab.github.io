@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/partners")
-@CrossOrigin(origins = "http://localhost:5500") // Дозволяє фронтенду робити запити
+@CrossOrigin(origins = "http://localhost:5500")
 public class PartnerController {
 
     private final PartnerService partnerService;

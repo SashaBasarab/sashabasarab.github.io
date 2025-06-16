@@ -22,24 +22,24 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // Відключення CSRF (якщо потрібно)
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/public/**").permitAll() // Відкрита зона
+                        .requestMatchers("/public/**").permitAll()
                         .requestMatchers("/admin/**").access((authenticationSupplier, context) ->
                                 new AuthorizationDecision(isAdmin(authenticationSupplier))
-                        ) // Перевірка адміністратора
-                        .anyRequest().authenticated() // Усі інші запити потребують авторизації
+                        )
+                        .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2
                         .userInfoEndpoint(userInfo -> userInfo
-                                .oidcUserService(this.oidcUserService()) // Кастомний OIDC User Service
+                                .oidcUserService(this.oidcUserService())
                         )
                 )
                 .logout(logout -> logout
-                        .logoutUrl("/logout")  // URL для виходу з акаунту
-                        .logoutSuccessUrl("/login") // Перенаправлення після успішного виходу
-                        .invalidateHttpSession(true) // Видалення сесії
-                        .clearAuthentication(true)  // Очищення автентифікації
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/login")
+                        .invalidateHttpSession(true)
+                        .clearAuthentication(true)
                 );
 
         return http.build();
@@ -52,7 +52,6 @@ public class SecurityConfig {
             public OidcUser loadUser(OidcUserRequest userRequest) throws OAuth2AuthenticationException {
                 OidcUser oidcUser = super.loadUser(userRequest);
 
-                // Отримання email користувача
                 String email = oidcUser.getAttribute("email");
                 if (email == null || !email.endsWith("@ukd.edu.ua")) {
                     throw new OAuth2AuthenticationException(new OAuth2Error("invalid_token"),

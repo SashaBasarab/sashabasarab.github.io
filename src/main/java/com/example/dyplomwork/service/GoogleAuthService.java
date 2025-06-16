@@ -10,7 +10,7 @@ import java.util.Collections;
 
 @Service
 public class GoogleAuthService {
-    private static final String CLIENT_ID = "YOUR_GOOGLE_CLIENT_ID";
+    private static final String CLIENT_ID = "477185879772-35jur76dirbc12ko8fujegqgmrhmfv70.apps.googleusercontent.com";
 
     public String verifyGoogleToken(String tokenId) {
         try {

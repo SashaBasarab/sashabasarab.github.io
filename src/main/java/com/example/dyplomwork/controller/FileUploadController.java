@@ -21,7 +21,7 @@ public class FileUploadController {
 
     public FileUploadController() {
         try {
-            Files.createDirectories(Paths.get(UPLOAD_DIR)); // Створюємо папку, якщо її немає
+            Files.createDirectories(Paths.get(UPLOAD_DIR));
         } catch (IOException e) {
             throw new RuntimeException("Не вдалося створити директорію для завантаження файлів", e);
         }
@@ -30,14 +30,11 @@ public class FileUploadController {
     @PostMapping("/image")
     public ResponseEntity<String> uploadImage(@RequestParam("file") MultipartFile file) {
         try {
-            // Генеруємо унікальну назву файлу
             String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
             Path path = Paths.get(UPLOAD_DIR).resolve(fileName);
 
-            // Зберігаємо файл
             Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
 
-            // Формуємо URL для доступу до зображення
             String imageUrl = "/api/uploads/" + fileName;
             return ResponseEntity.ok(imageUrl);
         } catch (IOException e) {
@@ -53,7 +50,7 @@ public class FileUploadController {
 
             if (resource.exists() && resource.isReadable()) {
                 return ResponseEntity.ok()
-                        .contentType(MediaType.IMAGE_JPEG) // Можна змінити на загальний MediaType.IMAGE_PNG, якщо потрібна підтримка PNG
+                        .contentType(MediaType.IMAGE_JPEG)
                         .body(resource);
             } else {
                 return ResponseEntity.notFound().build();
